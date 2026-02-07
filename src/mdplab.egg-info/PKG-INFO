@@ -1,0 +1,6 @@
+Metadata-Version: 2.4
+Name: mdplab
+Version: 0.1.0
+Summary: A learning laboratory for Markov Decision Processes and Reinforcement Learning
+Author: Luiz Felipe Martins
+Requires-Python: >=3.11

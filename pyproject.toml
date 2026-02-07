@@ -1,0 +1,20 @@
+[build-system]
+requires = ["setuptools>=68", "wheel"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "mdplab"
+version = "0.1.0"
+description = "A learning laboratory for Markov Decision Processes and Reinforcement Learning"
+authors = [
+    { name = "Luiz Felipe Martins" }
+]
+requires-python = ">=3.11"
+dependencies = []
+
+[tool.setuptools]
+package-dir = {"" = "src"}
+
+[tool.setuptools.packages.find]
+where = ["src"]
+
