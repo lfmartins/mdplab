@@ -1,6 +1,9 @@
+LICENSE
 pyproject.toml
 src/mdplab/__init__.py
 src/mdplab.egg-info/PKG-INFO
 src/mdplab.egg-info/SOURCES.txt
 src/mdplab.egg-info/dependency_links.txt
+src/mdplab.egg-info/requires.txt
 src/mdplab.egg-info/top_level.txt
+tests/test_import.py

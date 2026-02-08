@@ -1,0 +1,10 @@
+numpy<2
+scipy
+pandas
+matplotlib
+torch<2.3,>=2.2
+torchvision
+torchaudio
+gymnasium[classic-control]>=0.29
+torchrl>=0.3
+stable-baselines3>=2.2

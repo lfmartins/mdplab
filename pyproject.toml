@@ -1,20 +1,29 @@
 [build-system]
-requires = ["setuptools>=68", "wheel"]
+requires = ["setuptools>=64", "wheel"]
 build-backend = "setuptools.build_meta"
 
 [project]
 name = "mdplab"
 version = "0.1.0"
-description = "A learning laboratory for Markov Decision Processes and Reinforcement Learning"
+description = "Educational reinforcement learning laboratory"
+readme = "README.md"
+requires-python = ">=3.11,<3.12"
+license = { text = "MIT" }
+
 authors = [
-    { name = "Luiz Felipe Martins" }
+  { name = "Luiz Felipe Martins" }
 ]
-requires-python = ">=3.11"
-dependencies = []
 
-[tool.setuptools]
-package-dir = {"" = "src"}
-
-[tool.setuptools.packages.find]
-where = ["src"]
+dependencies = [
+  "numpy<2",
+  "scipy",
+  "pandas",
+  "matplotlib",
+  "torch>=2.2,<2.3",
+  "torchvision",
+  "torchaudio",
+  "gymnasium[classic-control]>=0.29",
+  "torchrl>=0.3",
+  "stable-baselines3>=2.2",
+]
 
