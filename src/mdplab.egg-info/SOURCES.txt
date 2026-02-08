@@ -1,4 +1,5 @@
 LICENSE
+README.md
 pyproject.toml
 src/mdplab/__init__.py
 src/mdplab.egg-info/PKG-INFO
