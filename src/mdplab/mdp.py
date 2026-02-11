@@ -1,7 +1,8 @@
 import numpy as np
 
 from typing import (
-    Hashable, Dict, List, Tuple, Union, Iterable, AbstractSet,
+    Hashable, Dict, List, Tuple, Union,
+    Iterable, AbstractSet, Mapping,
 )
 from types import MappingProxyType
 
@@ -155,11 +156,8 @@ def is_terminal(self, state: State) -> bool:
     return state in self._terminal_states
 
 @property
-def admissible_actions(self):
-    return {
-        s: frozenset(a)
-        for s, a in self._admissible_actions.items()
-    }
+def admissible_actions(self) -> Mapping[State, frozenset[Action]]:
+    return MappingProxyType(self._admissible_actions)
 
 @property
 def transition_probs(self) -> np.ndarray:
