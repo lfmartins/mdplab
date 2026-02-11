@@ -1,8 +1,9 @@
 import numpy as np
 
 from typing import (
-    Hashable, Dict, List, Tuple, Union, Iterable
+    Hashable, Dict, List, Tuple, Union, Iterable, AbstractSet,
 )
+from types import MappingProxyType
 
 State = Hashable
 Action = Hashable
@@ -25,11 +26,11 @@ class MDP:
                  actions: List[Action],
                  transitions: Transitions,
                  terminal_states: Iterable[State] = ()) -> None:
-        self._states = states.copy()
+        self._states = tuple(states)
         self._n_states = len(states)
-        self._actions = actions.copy()
+        self._actions = tuple(actions)
         self._n_actions = len(actions)
-        self._terminal_states = set(terminal_states)
+        self._terminal_states = frozenset(terminal_states)
         self._admissible_actions = {}
 
         for state in self._terminal_states:
@@ -109,11 +110,9 @@ class MDP:
                     elif not isinstance(p, (int, float)):
                         raise TypeError(f"In transition list fr state {state}, action {action}: "
                                         f"transition probability to state {target_state} must be an number or '*'")
-                    elif p < 0:
                         raise ValueError(f"In transition list for state {state}, action {action}: "
                                          f"transition probability to state {target_state} is negative")
-                    else:
-                        sum_probs += p
+                    sum_probs += p
 
                     self._transition_probs[i, j, k] = p
                     self._rewards[i, j, k] = r
@@ -122,10 +121,67 @@ class MDP:
                     raise ValueError(f"In transition list for state {state}, action {action}: "
                                       "probability for last transition must be '*'")
 
-                if abs(sum_probs + p - 1.0) > tol:
+                if abs(sum_probs - 1.0) > tol:
                     raise ValueError(f"In transition list for state {state}, action {action}: "
                                       "transition probabilities do not add to 1")
 
+        self._admissible_actions = {
+            s: frozenset(a)
+            for s, a in self._admissible_actions.items()
+        }
+
+
+@property
+def states(self) -> Tuple[State, ...]:
+    return self._states
+
+@property
+def actions(self) -> tuple[Action, ...]:
+    return self._actions
+
+@property
+def state_indexes(self):
+    return MappingProxyType(self._state_indexes)
+
+@property
+def action_indexes(self):
+    return MappingProxyType(self._action_indexes)
+
+@property
+def terminal_states(self) -> AbstractSet[State]:
+    return self._terminal_states
+
+def is_terminal(self, state: State) -> bool:
+    return state in self._terminal_states
+
+@property
+def admissible_actions(self):
+    return {
+        s: frozenset(a)
+        for s, a in self._admissible_actions.items()
+    }
+
+@property
+def transition_probs(self) -> np.ndarray:
+    view = self._transition_probs.view()
+    view.setflags(write=False)
+    return view
+
+@property
+def rewards(self) -> np.ndarray:
+    view = self._rewards.view()
+    view.setflags(write=False)
+    return view
+
+def P(self, state: State, action: Action) -> np.ndarray:
+    i = self._action_indexes[action]
+    j = self._state_indexes[state]
+    return self._transition_probs[i, j, :].copy()
+
+def R(self, state: State, action: Action) -> np.ndarray:
+    i = self._action_indexes[action]
+    j = self._state_indexes[state]
+    return self._rewards[i, j, :].copy()
 
 
 
