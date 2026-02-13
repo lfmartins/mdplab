@@ -111,8 +111,6 @@ class MDP:
                     elif not isinstance(p, (int, float)):
                         raise TypeError(f"In transition list fr state {state}, action {action}: "
                                         f"transition probability to state {target_state} must be an number or '*'")
-                        raise ValueError(f"In transition list for state {state}, action {action}: "
-                                         f"transition probability to state {target_state} is negative")
                     sum_probs += p
 
                     self._transition_probs[i, j, k] = p
@@ -132,54 +130,58 @@ class MDP:
         }
 
 
-@property
-def states(self) -> Tuple[State, ...]:
-    return self._states
+    @property
+    def states(self) -> Tuple[State, ...]:
+        return self._states
 
-@property
-def actions(self) -> tuple[Action, ...]:
-    return self._actions
+    @property
+    def actions(self) -> Tuple[Action, ...]:
+        return self._actions
 
-@property
-def state_indexes(self):
-    return MappingProxyType(self._state_indexes)
+    @property
+    def state_indexes(self) -> Mapping[State, int]:
+        return MappingProxyType(self._state_indexes)
 
-@property
-def action_indexes(self):
-    return MappingProxyType(self._action_indexes)
+    @property
+    def action_indexes(self) -> Mapping[Action, int]:
+        return MappingProxyType(self._action_indexes)
 
-@property
-def terminal_states(self) -> AbstractSet[State]:
-    return self._terminal_states
+    @property
+    def terminal_states(self) -> AbstractSet[State]:
+        return self._terminal_states
 
-def is_terminal(self, state: State) -> bool:
-    return state in self._terminal_states
+    def is_terminal(self, state: State) -> bool:
+        return state in self._terminal_states
 
-@property
-def admissible_actions(self) -> Mapping[State, frozenset[Action]]:
-    return MappingProxyType(self._admissible_actions)
+    @property
+    def admissible_actions(self) -> Mapping[State, frozenset[Action]]:
+        return MappingProxyType(self._admissible_actions)
 
-@property
-def transition_probs(self) -> np.ndarray:
-    view = self._transition_probs.view()
-    view.setflags(write=False)
-    return view
+    @property
+    def transition_probs(self) -> np.ndarray:
+        view = self._transition_probs.view()
+        view.setflags(write=False)
+        return view
 
-@property
-def rewards(self) -> np.ndarray:
-    view = self._rewards.view()
-    view.setflags(write=False)
-    return view
+    @property
+    def rewards(self) -> np.ndarray:
+        view = self._rewards.view()
+        view.setflags(write=False)
+        return view
 
-def P(self, state: State, action: Action) -> np.ndarray:
-    i = self._action_indexes[action]
-    j = self._state_indexes[state]
-    return self._transition_probs[i, j, :].copy()
+    def P(self, state: State, action: Action) -> np.ndarray:
+        i = self._action_indexes[action]
+        j = self._state_indexes[state]
+        view = self._transition_probs[i, j, :].view()
+        view.setflags(write=False)
+        return view
 
-def R(self, state: State, action: Action) -> np.ndarray:
-    i = self._action_indexes[action]
-    j = self._state_indexes[state]
-    return self._rewards[i, j, :].copy()
+    def R(self, state: State, action: Action) -> np.ndarray:
+        i = self._action_indexes[action]
+        j = self._state_indexes[state]
+        view = self._rewards[i, j, :].view()
+        view.setflags(write=False)
+        return view
 
 
 
