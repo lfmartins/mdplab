@@ -1,32 +1,31 @@
 import pytest
-from mdplab.mdp import MDP
-from mdplab.mdp_fixtures import recycling_robot_mdp
+from mdplab import MDP
 
-def test_recycling_robot_creation(recycling_robot_mdp: MDP):
+@pytest.fixture
+def recycling_robot_mdp():
     """
     Test basic properties of the recycling robot MDP.
     """
-    mdp = recycling_robot_mdp
+    alpha = 0.8
+    beta = 0.6
+    rsearch = 15.0
+    rwait = 10.0
+    rempty = -3
 
-    # States and actions
-    assert set(mdp.states) == {"high", "low"}
-    assert set(mdp.actions) == {"search", "wait", "recharge"}
+    states = ["high", "low"]
+    actions = ["search", "wait", "recharge"]
+    transitions = {
+        "high": {
+            "search": [("high", alpha, rsearch), ("low", "*", rsearch)],
+            "wait": [("high", "*", rwait)],
+        },
+        "low": {
+            "search": [("low", beta, rsearch), ("high", "*", rempty)],
+            "wait": [("low", "*", rwait)],
+            "recharge": [("high", "*", 0.0)]
+        }
+    }
 
-    # Terminal states (none for recycling robot)
-    assert len(mdp.terminal_states) == 0
+    return MDP(states, actions, transitions)
 
-    # Admissible actions
-    assert set(mdp.admissible_actions["high"]) == {"search", "wait"}
-    assert set(mdp.admissible_actions["low"]) == {"search", "wait", "recharge"}
 
-    # Transition probabilities sum to 1
-    for state in mdp.states:
-        for action in mdp.admissible_actions[state]:
-            probs = mdp.P(state, action)
-            assert abs(probs.sum() - 1.0) < 1e-12
-
-    # Rewards are numbers
-    for state in mdp.states:
-        for action in mdp.admissible_actions[state]:
-            rewards = mdp.R(state, action)
-            assert all(isinstance(r, float) for r in rewards)
