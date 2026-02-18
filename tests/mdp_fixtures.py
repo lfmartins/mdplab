@@ -1,5 +1,6 @@
 import pytest
-from mdplab.mdp import MDP  # adjust import if your package is installed in editable mode
+from mdplab.mdp import MDP
+from mdplab.mdp_fixtures import recycling_robot_mdp
 
 def test_recycling_robot_creation(recycling_robot_mdp: MDP):
     """

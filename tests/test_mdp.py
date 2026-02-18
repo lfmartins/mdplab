@@ -1,4 +1,8 @@
 import pytest
 import numpy as np
-from mdplab.mdp import MDP
+
+def test_public_api_import():
+    from mdplab import MDP
+
+    assert MDP is not None
 
