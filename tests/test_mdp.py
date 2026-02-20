@@ -2,7 +2,6 @@
 import math
 import pytest
 from mdplab import MDP
-from tests.mdp_fixtures import recycling_robot_mdp  # fixture import
 
 def test_public_api_import():
     """
@@ -10,11 +9,27 @@ def test_public_api_import():
     """
     assert MDP is not None
 
+recycling_robot_cases = [
+    (0.8, 0.6, 15, 10, -3),
+]
 def test_recycling_robot_creation(recycling_robot_mdp: MDP):
-    """
-    Test basic properties of the recycling robot MDP.
-    """
-    mdp = recycling_robot_mdp
+    states = ["high", "low"]
+    actions = ["search", "wait", "recharge"]
+
+    for alpha, beta, rsearch, rwait, rempty in recycling_robot_cases:
+        transitions = {
+            "high": {
+                "search": [("high", alpha, rsearch), ("low", "*", rsearch)],
+                "wait": [("high", "*", rwait)],
+        },
+            "low": {
+                "search": [("low", beta, rsearch), ("high", "*", rempty)],
+                "wait": [("low", "*", rwait)],
+                "recharge": [("high", "*", 0.0)]
+        }
+    }
+
+    mdp = MDP(states, actions, transitions)
 
     # States and actions
     assert set(mdp.states) == {"high", "low"}
